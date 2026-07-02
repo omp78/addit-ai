@@ -1,0 +1,2 @@
+UPLOAD_DIR = Path("uploads")
+MAX_VIDEO_SIZE = 500 * 1024 * 1024
