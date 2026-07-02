@@ -10,8 +10,7 @@ from fastapi import HTTPException, UploadFile
 
 from backend.utils.file_validator import is_allowed_file
 
-UPLOAD_DIR = Path("uploads")
-
+from backend.config.settings import UPLOAD_DIR
 
 def save_video(file: UploadFile) -> dict:
     """
@@ -29,16 +28,19 @@ def save_video(file: UploadFile) -> dict:
     UPLOAD_DIR.mkdir(exist_ok=True)
 
     # Generate unique filename
-    unique_filename = f"{uuid4()}{Path(file.filename).suffix.lower()}"
+    job_id = str(uuid4())
 
-    file_path = UPLOAD_DIR / unique_filename
+    video_filename = f"{job_id}{Path(file.filename).suffix.lower()}"
+
+    file_path = UPLOAD_DIR / video_filename
 
     # Save file
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
     return {
-        "filename": unique_filename,
-        "original_filename": file.filename,
-        "path": str(file_path)
+    "job_id": job_id,
+    "video_filename": video_filename,
+    "original_filename": file.filename,
+    "video_path": str(file_path)
     }
