@@ -1,17 +1,17 @@
-# Addit AI 🚀
+# Addit AI
 
 AI-powered creator assistant that transforms videos into summaries, chapters, captions, and optimized content.
 
 ## Features (Planned)
 
-- 🎥 Video Upload
-- 🎙 Speech-to-Text
-- 📝 AI Summary
-- 🕒 Chapter Generation
-- 🏷 SEO Tags
-- 🎯 YouTube Title Generator
-- 💬 Video Chat (RAG)
-- ✂ Smart Video Editing
+- Video Upload
+- Speech-to-Text
+- AI Summary
+- Chapter Generation
+- SEO Tags
+- YouTube Title Generator
+- Video Chat (RAG)
+- Smart Video Editing
 
 ## Tech Stack
 
