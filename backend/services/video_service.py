@@ -3,7 +3,6 @@ Business logic for handling video files.
 """
 
 from pathlib import Path
-from uuid import uuid4
 import shutil
 
 from fastapi import HTTPException, UploadFile
@@ -12,7 +11,10 @@ from backend.utils.file_validator import is_allowed_file
 
 from backend.config.settings import UPLOAD_DIR
 
-def save_video(file: UploadFile) -> dict:
+def save_video(
+    file: UploadFile,
+    job_id: str
+):
     """
     Validate and save an uploaded video.
     """
@@ -28,7 +30,6 @@ def save_video(file: UploadFile) -> dict:
     UPLOAD_DIR.mkdir(exist_ok=True)
 
     # Generate unique filename
-    job_id = str(uuid4())
 
     video_filename = f"{job_id}{Path(file.filename).suffix.lower()}"
 

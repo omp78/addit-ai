@@ -4,6 +4,8 @@ Application configuration.
 
 from pathlib import Path
 
+
+
 # Base storage directory
 STORAGE_DIR = Path("storage")
 
