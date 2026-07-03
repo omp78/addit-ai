@@ -4,6 +4,7 @@ Video upload API endpoints.
 
 from fastapi import APIRouter, File, UploadFile
 
+from backend.services.job_service import process_upload
 from backend.services.video_service import save_video
 from backend.services.audio_service import extract_audio
 
@@ -16,18 +17,10 @@ def upload_video(file: UploadFile = File(...)):
     Upload a video and extract its audio.
     """
 
-    saved_video = save_video(file)
-
-    audio = extract_audio(
-        saved_video["video_path"],
-        saved_video["job_id"]
-    )
+    processed_job = process_upload(file)
 
     return {
-        "success": True,
-        "message": "Video uploaded and audio extracted successfully.",
-        "data": {
-            **saved_video,
-            **audio
-        }
+    "success": True,
+    "message": "Video uploaded and processed successfully.",
+    "data": processed_job
     }
