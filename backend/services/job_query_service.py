@@ -9,15 +9,16 @@ from backend.repositories.job_repository import (
 )
 
 
-def list_jobs():
+def list_jobs(user):
 
     db = SessionLocal()
 
     try:
-        return get_all_jobs(db)
+        return get_all_jobs(db,user.id)
 
     finally:
         db.close()
+    
 
 
 

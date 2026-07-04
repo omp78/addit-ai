@@ -5,6 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from backend.database.base import Base
 
+from sqlalchemy import ForeignKey
 
 class Job(Base):
     __tablename__ = "jobs"
@@ -69,4 +70,9 @@ class Job(Base):
         DateTime,
         default=datetime.utcnow,
         onupdate=datetime.utcnow
+    )
+
+    user_id: Mapped[int] = mapped_column(
+    ForeignKey("users.id"),
+    nullable=False
     )

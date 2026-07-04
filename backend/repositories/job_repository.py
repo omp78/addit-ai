@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from backend.models.job import Job
 
 def create_job(db: Session, job_data: dict) -> Job:
-
+    
     job = Job(**job_data)
 
     db.add(job)
@@ -40,10 +40,16 @@ def update_job(
 
     return job
 
-def get_all_jobs(db: Session):
+def get_all_jobs(
+    db,
+    user_id
+):
 
     return (
         db.query(Job)
+        .filter(
+            Job.user_id == user_id
+        )
         .order_by(Job.created_at.desc())
         .all()
     )

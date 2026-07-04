@@ -9,6 +9,10 @@ from backend.services.job_query_service import remove_job
 
 from backend.services.job_query_service import get_job_status
 
+from fastapi import Depends
+
+from backend.dependencies.auth_dependency import get_current_user
+
 from backend.services.job_query_service import (
     list_jobs,
     get_job
@@ -25,9 +29,12 @@ router = APIRouter(
     "",
     response_model=List[JobResponse]
 )
-def fetch_jobs():
+def fetch_jobs(
+    user = Depends(get_current_user)
+):
 
-    return list_jobs()
+    return list_jobs(user)
+
 
 
 

@@ -122,7 +122,7 @@ def process_job(job_id: str):
     finally:
         db.close()
 
-def create_upload_job(file):
+def create_upload_job(file, user):
 
     job_id = str(uuid4())
 
@@ -141,6 +141,7 @@ def create_upload_job(file):
         job = create_job(
             db,
             {
+                "user_id": user.id,
                 "job_id": job_id,
                 "status": JobStatus.QUEUED.value,
                 "original_filename": file.filename,
