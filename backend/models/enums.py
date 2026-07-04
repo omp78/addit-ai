@@ -7,3 +7,4 @@ class JobStatus(str, Enum):
     CONTENT_GENERATED = "CONTENT_GENERATED"
     COMPLETED = "COMPLETED"
     FAILED = "FAILED"
+    QUEUED = "QUEUED"

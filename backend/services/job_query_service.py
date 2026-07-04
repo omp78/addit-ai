@@ -77,3 +77,28 @@ def remove_job(job_id: str):
 
     finally:
         db.close()
+
+def get_job_status(job_id: str):
+
+    db = SessionLocal()
+
+    try:
+
+        job = get_job_by_job_id(
+            db,
+            job_id
+        )
+
+        if not job:
+            return None
+
+
+        return {
+            "job_id": job.job_id,
+            "status": job.status,
+            "error_message": job.error_message
+        }
+
+
+    finally:
+        db.close()

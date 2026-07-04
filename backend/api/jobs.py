@@ -7,6 +7,8 @@ from fastapi import HTTPException
 
 from backend.services.job_query_service import remove_job
 
+from backend.services.job_query_service import get_job_status
+
 from backend.services.job_query_service import (
     list_jobs,
     get_job
@@ -53,3 +55,18 @@ def delete_existing_job(job_id: str):
         "success": True,
         "message": "Job deleted successfully"
     }
+
+@router.get("/{job_id}/status")
+def fetch_job_status(job_id: str):
+
+    status = get_job_status(job_id)
+
+
+    if not status:
+        raise HTTPException(
+            status_code=404,
+            detail="Job not found"
+        )
+
+
+    return status

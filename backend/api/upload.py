@@ -4,29 +4,32 @@ Video upload API endpoints.
 
 from fastapi import APIRouter, File, UploadFile
 
-from backend.services.job_service import process_upload
-from backend.services.video_service import save_video
-from backend.services.audio_service import extract_audio
+from fastapi import BackgroundTasks
 
-from backend.schemas.upload_schema import UploadResponse
-
+from backend.services.job_service import (
+    create_upload_job,
+    process_job
+)
 
 router = APIRouter(tags=["Upload"])
 
-@router.post(
-    "/upload",
-    response_model=UploadResponse
-)
+@router.post("/upload")
+def upload_video(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...)
+):
 
-def upload_video(file: UploadFile = File(...)):
-    """
-    Upload a video and extract its audio.
-    """
+    job = create_upload_job(file)
 
-    processed_job = process_upload(file)
+
+    background_tasks.add_task(
+        process_job,
+        job["job_id"]
+    )
+
 
     return {
-    "success": True,
-    "message": "Video uploaded and processed successfully.",
-    "data": processed_job
+        "success": True,
+        "message": "Video queued successfully",
+        "data": job
     }
