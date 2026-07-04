@@ -14,6 +14,8 @@ from backend.services.transcription_service import transcribe_audio
 from backend.services.content_service import generate_content
 from uuid import uuid4
 
+
+
 from backend.database.connection import SessionLocal
 from backend.repositories.job_repository import (
     create_job,

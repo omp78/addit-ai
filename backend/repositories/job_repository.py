@@ -39,3 +39,22 @@ def update_job(
     db.refresh(job)
 
     return job
+
+def get_all_jobs(db: Session):
+
+    return (
+        db.query(Job)
+        .order_by(Job.created_at.desc())
+        .all()
+    )
+
+def delete_job(
+    db: Session,
+    job: Job
+):
+
+    db.delete(job)
+
+    db.commit()
+
+    return True
