@@ -25,6 +25,10 @@ class Job(Base):
         String,
         default="PROCESSING"
     )
+    error_message: Mapped[str] = mapped_column(
+    String,
+    nullable=True
+    )
 
     original_filename: Mapped[str] = mapped_column(
         String,

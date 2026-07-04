@@ -8,10 +8,16 @@ from backend.services.job_service import process_upload
 from backend.services.video_service import save_video
 from backend.services.audio_service import extract_audio
 
+from backend.schemas.upload_schema import UploadResponse
+
+
 router = APIRouter(tags=["Upload"])
 
+@router.post(
+    "/upload",
+    response_model=UploadResponse
+)
 
-@router.post("/upload")
 def upload_video(file: UploadFile = File(...)):
     """
     Upload a video and extract its audio.
