@@ -7,10 +7,28 @@ from backend.api.jobs import router as jobs_router
 
 from backend.api.auth import router as auth_router
 
-app = FastAPI(
-    title="Addit AI API",
-    version="0.1.0",
-    description="Backend API for Addit AI"
+from fastapi.middleware.cors import CORSMiddleware
+
+#app = FastAPI(
+  #  title="Addit AI API",
+ #   version="0.1.0",
+#   description="Backend API for Addit AI"
+#)
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+
+    allow_origins=[
+        "http://localhost:5173"
+    ],
+
+    allow_credentials=True,
+
+    allow_methods=["*"],
+
+    allow_headers=["*"],
 )
 
 app.include_router(health_router)

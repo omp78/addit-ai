@@ -3,6 +3,8 @@ from backend.database.connection import SessionLocal
 from backend.repositories.job_repository import delete_job
 from pathlib import Path
 
+import json
+
 from backend.repositories.job_repository import (
     get_all_jobs,
     get_job_by_job_id,
@@ -102,4 +104,54 @@ def get_job_status(job_id: str):
 
 
     finally:
+        db.close()
+
+def get_job_result(job_id: str):
+
+    db = SessionLocal()
+
+
+    try:
+
+        job = get_job_by_job_id(
+            db,
+            job_id
+        )
+
+
+        if not job:
+
+            return None
+
+
+        if not job.summary_path:
+
+            return None
+
+
+        summary_file = Path(
+            job.summary_path
+        )
+
+
+        if not summary_file.exists():
+
+            return None
+
+
+        with open(
+            summary_file,
+            "r",
+            encoding="utf-8"
+        ) as file:
+
+
+            data = json.load(file)
+
+
+        return data
+
+
+    finally:
+
         db.close()

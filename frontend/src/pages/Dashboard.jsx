@@ -1,20 +1,26 @@
 import { useEffect, useState } from "react";
-
+import JobHistory from "../components/JobHistory";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
+import Sidebar from "../components/Sidebar";
+import UploadCard from "../components/UploadCard";
+import ResultCard from "../components/ResultCard";
+import WritingLoader from "../components/WritingLoader";
+function Dashboard() {
 
-function Dashboard(){
-
-    const [user,setUser] = useState(null);
-    const [file,setFile] = useState(null);
-    const [jobs,setJobs] = useState([]);
-    const [job,setJob] = useState(null);
-    const [result,setResult] = useState(null);
-
+    const [user, setUser] = useState(null);
+    const [file, setFile] = useState(null);
+    const [jobs, setJobs] = useState([]);
+    const [job, setJob] = useState(null);
+    const [result, setResult] = useState(null);
+    const [sidebarOpen,setSidebarOpen] =useState(true);
     const navigate = useNavigate();
+    const [selectedJob,setSelectedJob] = useState(null);
+    const [processing,setProcessing] =useState(false);  
+    const [progress,setProgress] = useState(0); 
+    const [resultLoading,setResultLoading] =useState(false); 
 
-
-    const logout = ()=>{
+    const logout = () => {
         localStorage.removeItem(
             "token"
         );
@@ -23,47 +29,65 @@ function Dashboard(){
         );
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchUser();
         fetchJobs();
-    },[]);
+    }, []);
 
 
-    const fetchJobs = async()=>{
-        try{
-        const response = await api.get(
+    const fetchJobs = async () => {
+        try {
+            const response = await api.get(
                 "/jobs"
             );
             setJobs(
                 response.data
             );
         }
-        catch(error){
+        catch (error) {
             console.log(error);
         }
     };
 
 
-    const checkStatus = async(jobId)=>{
+    const checkStatus = async (jobId) => {
         const response = await api.get(
             `/jobs/${jobId}/status`
         );
         setJob(
             response.data
         );
-        if(response.data.status !== "COMPLETED" && response.data.status !== "FAILED"){
+        
+        if (response.data.status !== "COMPLETED" && response.data.status !== "FAILED") {
             setTimeout(
-                ()=>checkStatus(jobId),
+                () => checkStatus(jobId),
                 3000
             );
+                setProcessing(false);
         }
-        else if(response.data.status === "COMPLETED"){
-            fetchResult(jobId);
+        if(response.data.status === "QUEUED"){
+            setProgress(20);
         }
+        if(response.data.status === "AUDIO_EXTRACTED"){
+            setProgress(50);
+        }
+        if(response.data.status === "TRANSCRIBED"){
+            setProgress(75);
+        }
+        
+        else if (response.data.status === "COMPLETED") {
+            setProgress(100);
+            setResultLoading(true);
+            await fetchResult(jobId);
+            setResultLoading(false);
+            setProcessing(false);
+        }
+        
     };
 
-    const fetchResult = async(jobId)=>{
-        try{
+    const fetchResult = async (jobId) => {
+        setSelectedJob(jobId);
+        try {
             const response = await api.get(
                 `/jobs/${jobId}/result`
             );
@@ -71,38 +95,41 @@ function Dashboard(){
                 response.data
             );
         }
-        catch(error){
+        catch (error) {
             console.log(error);
         }
     };
 
-    const fetchUser = async()=>{
-        try{
+    const fetchUser = async () => {
+        try {
             const response = await api.get(
                 "/auth/me"
             );
             setUser(response.data);
         }
-        catch(error){
+        catch (error) {
 
             console.log(error);
         }
     };
 
 
-    const uploadVideo = async()=>{
+    const uploadVideo = async () => {
         console.log("UPLOAD CLICKED 🔥");
-        if(!file){
+        if (!file) {
             alert("Select a video first");
             return;
         }
-
         const formData = new FormData();
         formData.append(
             "file",
             file
         );
-        try{
+        try {
+            setProgress(5);
+            setResult(null);
+            setProcessing(true);
+            setResultLoading(true);
             const response = await api.post(
                 "/upload",
                 formData
@@ -116,127 +143,38 @@ function Dashboard(){
                 response.data.data.job_id
             );
         }
-        catch(error){
+        catch (error) {
             console.log(error);
             alert("Upload failed");
         }
     };
 
-    return(
-        <div>
-            <h1>
-                Addit AI Dashboard 🚀
-            </h1>
-            <button onClick={logout}>
-                Logout
-            </button>
-            {
-                user &&
-                <h2>
-                    Welcome {user.name} 👋
-                </h2>
-            }
-            <hr />
-            <h2>
-                Upload Video
-            </h2>
-            <input
-                type="file"
-                accept="video/*"
-                onChange={
-                    e=>setFile(
-                        e.target.files[0]
-                    )
-                }
+    return (
+       <div className="h-screen bg-[#F8F4E3] text-black flex overflow-hidden">
+            <Sidebar
+                user={user}
+                jobs={jobs}
+                fetchResult={fetchResult}
+                logout={logout}
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+                selectedJob={selectedJob}
             />
-            <button onClick={uploadVideo}>
-                Upload
-            </button>
-            {
-                job &&
-                <div>
-                    <h3>
-                        Job Created
-                    </h3>
-                    <p>
-                        ID: {job.job_id}
-                    </p>
-                    <p>
-                        Status: {job.status}
-                    </p>
-                </div>
-            }
-            {
-                result &&
-                <div>
-                    <h2>
-                        ✨ AI Result
-                    </h2>
-                    <h3>
-                        Summary
-                    </h3>
-                    <p>
-                        {result.summary}
-                    </p>
-                    <h3>
-                        Key Points
-                    </h3>
-                    <ul>
-                        {
-                            result.key_points?.map(
-                                (point,index)=>(
-
-                                    <li key={index}>
-                                        {point}
-                                    </li>
-                                )
-                            )
-                        }
-                    </ul>
-                    <h3>
-                        YouTube Title
-                    </h3>
-                    <p>
-                        {result.youtube_title}
-                    </p>
-                    <h3>
-                        Description
-                    </h3>
-                    <p>
-                        {result.youtube_description}
-                    </p>
-                    <h3>
-                        SEO Keywords
-                    </h3>
-                    <p>
-                        {
-                            result.seo_keywords?.join(", ")
-                        }
-                    </p>
-                </div>
-            }
-            <hr/>
-            <h2>
-                Previous Jobs
-            </h2>
-            {
-                jobs.map(
-                    (item)=>(
-                        <div key={item.job_id}>
-                            <h3>
-                                {item.original_filename}
-                            </h3>
-                            <p>
-                                Status: {item.status}
-                            </p>
-                            <button onClick={()=>fetchResult(item.job_id)}>
-                                View Result
-                            </button>
-                            <hr />
-                        </div>
-                    )
-                )
-            }
+            <main className="flex-1 p-10 overflow-y-auto">
+                <UploadCard
+                    setFile={setFile}
+                    uploadVideo={uploadVideo}
+                    job={job}
+                    processing={processing}
+                    progress={progress}
+                />
+                {resultLoading
+                ?
+                    <WritingLoader />
+                    :
+                        <ResultCard result={result}/>  
+                }
+            </main>
         </div>
     );
 }

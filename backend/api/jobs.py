@@ -8,7 +8,7 @@ from fastapi import HTTPException
 from backend.services.job_query_service import remove_job
 
 from backend.services.job_query_service import get_job_status
-
+from backend.services.job_query_service import get_job_result
 from fastapi import Depends
 
 from backend.dependencies.auth_dependency import get_current_user
@@ -77,3 +77,23 @@ def fetch_job_status(job_id: str):
 
 
     return status
+
+@router.get("/{job_id}/result")
+def fetch_result(
+    job_id: str
+):
+
+    result = get_job_result(
+        job_id
+    )
+
+
+    if not result:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Result not found"
+        )
+
+
+    return result
