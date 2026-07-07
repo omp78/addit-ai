@@ -13,13 +13,18 @@ from fastapi.middleware.cors import CORSMiddleware
 #   description="Backend API for Addit AI"
 #)
 
+origins = [
+    "http://localhost:3000",
+    "https://your-vercel-url.vercel.app"
+]
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
 
-    allow_origins=["*"],
+    allow_origins=origins,
 
-    allow_credentials=False,
+    allow_credentials=True,
 
     allow_methods=["*"],
 
