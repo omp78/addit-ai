@@ -20,7 +20,7 @@ if not api_key:
 
 client = genai.Client(api_key=api_key)
 
-def generate_content(transcript_path: Path, job_id: str) -> dict:
+def generate_content(transcript_path: Path, job_id: str, timestamp_path: Path) -> dict:
     """
     Generate AI content from a transcript.
     """
@@ -29,39 +29,60 @@ def generate_content(transcript_path: Path, job_id: str) -> dict:
 
     with open(transcript_path, "r", encoding="utf-8") as file:
         transcript = file.read()
-
+    with open(timestamp_path, "r", encoding="utf-8") as file:
+        timestamps = json.load(file)
     prompt = f"""
-    You are an expert content creator.
+        You are an expert video content analyzer.
 
-    Analyze the following transcript.
+        Analyze the transcript and timestamp segments.
 
-    Return ONLY valid JSON.
+        Return ONLY valid JSON.
 
-    Structure:
+        Structure:
 
-    {{
-        "summary":"",
+        {{
+            "summary":"",
 
-        "key_points":[
-            "",
-            "",
-            ""
-        ],
+            "key_points":[
+                "",
+                "",
+                ""
+            ],
 
-        "youtube_title":"",
+            "chapters":[
+                {{
+                    "time":"00:00",
+                    "title":""
+                }}
+            ],
 
-        "youtube_description":"",
+            "youtube_title":"",
 
-        "seo_keywords":[
-            "",
-            "",
-            ""
-        ]
-    }}
+            "youtube_description":"",
 
-    Transcript:
+            "seo_keywords":[
+                "",
+                "",
+                ""
+            ]
+        }}
 
-    {transcript}
+        Rules for chapters:
+
+        - Find only important moments.
+        - Create meaningful video chapters.
+        - Use the timestamp data.
+        - Do not create a chapter for every segment.
+        - Convert seconds into MM:SS format.
+
+        Transcript:
+
+        {transcript}
+
+
+        Timestamp Data:
+
+        {timestamps}
     """
     response = client.models.generate_content(
     model="gemini-2.5-flash",

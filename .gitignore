@@ -20,3 +20,9 @@ outputs/
 # OS files
 Thumbs.db
 .DS_Store
+
+node_modules/
+
+dist/
+
+*.pyc

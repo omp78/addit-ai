@@ -6,7 +6,6 @@ from backend.api.upload import router as upload_router
 from backend.api.jobs import router as jobs_router
 
 from backend.api.auth import router as auth_router
-
 from fastapi.middleware.cors import CORSMiddleware
 
 #app = FastAPI(
@@ -16,15 +15,12 @@ from fastapi.middleware.cors import CORSMiddleware
 #)
 
 app = FastAPI()
-
 app.add_middleware(
     CORSMiddleware,
 
-    allow_origins=[
-        "http://localhost:5173"
-    ],
+    allow_origins=["*"],
 
-    allow_credentials=True,
+    allow_credentials=False,
 
     allow_methods=["*"],
 

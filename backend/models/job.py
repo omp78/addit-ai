@@ -76,3 +76,8 @@ class Job(Base):
     ForeignKey("users.id"),
     nullable=False
     )
+
+    chapter_path: Mapped[str] = mapped_column(
+        String,
+        nullable=True
+    )

@@ -134,7 +134,7 @@ my-8
 
 
                 <p className="
-                    text-gray-300
+                    text-black/70
                 ">
 
                     {result.summary}
@@ -144,7 +144,72 @@ my-8
 
             </PaperCard>
 
-
+            <PaperCard delay={0.1}>
+                <h2
+                    className="
+                    text-xl
+                    font-bold
+                    mb-4
+                    "
+                >
+                    ⏱️ Important Moments
+                </h2>
+                <div
+                    className="
+                    space-y-3
+                    "
+                >
+                    {
+                        result.chapters?.map(
+                            (chapter,index)=>(
+                                <motion.div
+                                    key={index}
+                                    initial={{
+                                        opacity:0,
+                                        x:-40
+                                    }}
+                                    animate={{
+                                        opacity:1,
+                                        x:0
+                                    }}
+                                    transition={{
+                                        delay:index * 0.15
+                                    }}
+                                    whileHover={{
+                                        scale:1.03,
+                                        rotate:-0.5
+                                    }}
+                                    className="
+                                    bg-[#FFD23F]
+                                    border-4
+                                    border-black
+                                    p-4
+                                    flex
+                                    items-center
+                                    gap-5
+                                    shadow-[5px_5px_0_black]
+                                    font-black
+                                    "
+                                >
+                                    <span
+                                        className="
+                                        bg-black
+                                        text-white
+                                        px-3
+                                        py-1
+                                        "
+                                    >
+                                        {chapter.time}
+                                    </span>
+                                    <p>
+                                        {chapter.title}
+                                    </p>
+                                </motion.div>
+                            )
+                        )
+                    }
+                </div>
+            </PaperCard>
 
             <PaperCard delay={0.15}>
 
@@ -163,7 +228,7 @@ my-8
                 <ul className="
                     list-disc
                     ml-5
-                    text-gray-300
+                    text-black/70
                 ">
 
                     {
@@ -214,7 +279,7 @@ my-8
                 </h3>
 
 
-                <p className="text-gray-300">
+                <p className="text-black/70">
 
                     {result.youtube_title}
 
@@ -231,7 +296,7 @@ my-8
                 </h3>
 
 
-                <p className="text-gray-300">
+                <p className="text-black/70">
 
                     {result.youtube_description}
 
@@ -249,7 +314,7 @@ my-8
                 </h3>
 
 
-                <p className="text-gray-300">
+                <p className="text-black/70">
 
                     {
                         result.seo_keywords?.join(", ")

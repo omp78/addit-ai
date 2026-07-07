@@ -6,6 +6,7 @@ from pathlib import Path
 from groq import Groq
 from dotenv import load_dotenv
 import os
+import json
 
 from backend.config.settings import TRANSCRIPT_DIR
 
@@ -30,9 +31,37 @@ def transcribe_audio(audio_path: Path, job_id: str) -> dict:
             model="whisper-large-v3",
             response_format="verbose_json"
         )
+        print("🔥 GROQ WHISPER RESPONSE START")
+
+    print(
+        transcription.model_dump()
+    )
+
+    print("🔥 GROQ WHISPER RESPONSE END")  
     with open(transcript_path, "w", encoding="utf-8") as file:
         file.write(transcription.text)
+        timestamp_path = TRANSCRIPT_DIR / f"{job_id}_timestamps.json"
+        segments = []
+        for segment in transcription.segments:
+            segments.append(
+                {
+                    "start": segment["start"],
+                    "end": segment["end"],
+                    "text": segment["text"]
+                }
+            )
+        with open(
+            timestamp_path,
+            "w",
+            encoding="utf-8"
+        ) as file:
+            json.dump(
+                segments,
+                file,
+                indent=4
+            )
     return {
     "transcript_path": str(transcript_path),
+    "timestamp_path": str(timestamp_path),
     "language": transcription.language
     }

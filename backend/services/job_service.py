@@ -80,7 +80,8 @@ def process_job(job_id: str):
         # content
         content = generate_content(
             Path(transcript["transcript_path"]),
-            job_id
+            job_id,
+            Path(transcript["timestamp_path"])
         )
         logger.info(f"Content generated for job: {job_id}")
 
