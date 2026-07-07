@@ -1,10 +1,54 @@
-from fastapi import APIRouter
+"""
+Health check API.
+"""
 
-router = APIRouter(tags=["Health"])
-@router.get("/health")
+from fastapi import APIRouter
+from sqlalchemy import text
+
+from backend.database.connection import SessionLocal
+
+
+router = APIRouter(
+    prefix="/health",
+    tags=["Health"]
+)
+
+
+@router.get("")
 def health_check():
-    return {
-        "status": "healthy",
-        "service": "Addit AI",
-        "version": "0.1.0"
-    }
+
+    db = SessionLocal()
+
+    try:
+
+        db.execute(
+            text("SELECT 1")
+        )
+
+        return {
+
+            "status": "healthy",
+
+            "database": "connected",
+
+            "service": "Addit AI"
+
+        }
+
+
+    except Exception as e:
+
+        return {
+
+            "status": "unhealthy",
+
+            "database": "error",
+
+            "error": str(e)
+
+        }
+
+
+    finally:
+
+        db.close()

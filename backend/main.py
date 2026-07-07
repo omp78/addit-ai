@@ -2,7 +2,6 @@ from fastapi import FastAPI
 
 from backend.api.health import router as health_router
 from backend.api.upload import router as upload_router
-
 from backend.api.jobs import router as jobs_router
 
 from backend.api.auth import router as auth_router
