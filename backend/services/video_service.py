@@ -27,8 +27,7 @@ def save_video(
         )
 
     # Create upload directory
-    UPLOAD_DIR.mkdir(exist_ok=True)
-
+    UPLOAD_DIR.mkdir(parents=True,exist_ok=True)
     # Generate unique filename
 
     video_filename = f"{job_id}{Path(file.filename).suffix.lower()}"
