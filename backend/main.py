@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 origins = [
     "http://localhost:3000",
-    "https://addit-kjwintngw-printers.vercel.app"
+    "https://addit-ai.vercel.app"
 ]
 
 app = FastAPI()
