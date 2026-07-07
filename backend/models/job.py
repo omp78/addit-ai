@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, Integer, String
+from sqlalchemy import JSON, DateTime, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from backend.database.base import Base
@@ -79,5 +79,40 @@ class Job(Base):
 
     chapter_path: Mapped[str] = mapped_column(
         String,
+        nullable=True
+    )
+
+    summary: Mapped[str] = mapped_column(
+        String,
+        nullable=True
+    )
+
+
+    key_points: Mapped[dict] = mapped_column(
+        JSON,
+        nullable=True
+    )
+
+
+    chapters: Mapped[dict] = mapped_column(
+        JSON,
+        nullable=True
+    )
+
+
+    youtube_title: Mapped[str] = mapped_column(
+        String,
+        nullable=True
+    )
+
+
+    youtube_description: Mapped[str] = mapped_column(
+        String,
+        nullable=True
+    )
+
+
+    seo_keywords: Mapped[dict] = mapped_column(
+        JSON,
         nullable=True
     )

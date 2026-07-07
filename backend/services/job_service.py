@@ -78,22 +78,41 @@ def process_job(job_id: str):
 
 
         # content
+       # content
         content = generate_content(
             Path(transcript["transcript_path"]),
-            job_id,
-            Path(transcript["timestamp_path"])
+            job_id
         )
-        logger.info(f"Content generated for job: {job_id}")
+
+        logger.info(
+            f"Content generated for job: {job_id}"
+        )
 
 
         update_job(
             db,
             job,
             status=JobStatus.COMPLETED.value,
-            summary_path=content["summary_path"]
-        )
-        logger.info(f"Job completed successfully: {job_id}")
 
+            summary_path=content["summary_path"],
+
+            summary=content.get("summary"),
+
+            key_points=content.get("key_points"),
+
+            chapters=content.get("chapters"),
+
+            youtube_title=content.get("youtube_title"),
+
+            youtube_description=content.get("youtube_description"),
+
+            seo_keywords=content.get("seo_keywords")
+        )
+
+
+        logger.info(
+            f"Job completed successfully: {job_id}"
+        )
 
         return {
             **{"video_path": job.video_path},

@@ -106,10 +106,11 @@ def get_job_status(job_id: str):
     finally:
         db.close()
 
-def get_job_result(job_id: str):
+def get_job_result(
+    job_id: str
+):
 
     db = SessionLocal()
-
 
     try:
 
@@ -124,32 +125,21 @@ def get_job_result(job_id: str):
             return None
 
 
-        if not job.summary_path:
+        return {
 
-            return None
+            "summary": job.summary,
 
+            "key_points": job.key_points,
 
-        summary_file = Path(
-            job.summary_path
-        )
+            "chapters": job.chapters,
 
+            "youtube_title": job.youtube_title,
 
-        if not summary_file.exists():
+            "youtube_description": job.youtube_description,
 
-            return None
+            "seo_keywords": job.seo_keywords
 
-
-        with open(
-            summary_file,
-            "r",
-            encoding="utf-8"
-        ) as file:
-
-
-            data = json.load(file)
-
-
-        return data
+        }
 
 
     finally:
