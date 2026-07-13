@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
 import AuthLayout from "../components/AuthLayout";
+import logo from "../assets/logo.png";
 
 function Login() {
     const [email, setEmail] = useState("");
