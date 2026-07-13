@@ -102,3 +102,70 @@ def login_user(user_data):
     finally:
 
         db.close()
+
+
+def login_google(credential: str):
+    import requests
+    import secrets
+
+    try:
+        response = requests.get(
+            f"https://oauth2.googleapis.com/tokeninfo?id_token={credential}",
+            timeout=5
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Failed to connect to Google validation service: {str(e)}"
+        )
+
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid Google token"
+        )
+
+    token_info = response.json()
+
+    if token_info.get("email_verified") != "true" and token_info.get("email_verified") != True:
+        raise HTTPException(
+            status_code=400,
+            detail="Google account email is not verified"
+        )
+
+    email = token_info.get("email")
+    name = token_info.get("name", "Google User")
+
+    if not email:
+        raise HTTPException(
+            status_code=400,
+            detail="Email not provided by Google token"
+        )
+
+    db = SessionLocal()
+    try:
+        user = get_user_by_email(db, email)
+        if not user:
+            random_pwd = secrets.token_hex(16)
+            user = create_user(
+                db,
+                {
+                    "name": name,
+                    "email": email,
+                    "hashed_password": hash_password(random_pwd)
+                }
+            )
+
+        token = create_access_token(
+            {
+                "sub": user.user_id
+            }
+        )
+
+        return {
+            "access_token": token,
+            "token_type": "bearer"
+        }
+
+    finally:
+        db.close()

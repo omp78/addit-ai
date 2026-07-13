@@ -36,3 +36,7 @@ class TokenResponse(BaseModel):
     access_token: str
 
     token_type: str
+
+
+class GoogleLogin(BaseModel):
+    credential: str

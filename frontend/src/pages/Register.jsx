@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
@@ -19,6 +19,51 @@ function Register() {
         setShake(true);
         setTimeout(() => setShake(false), 500);
     };
+
+    const handleGoogleCallback = async (response) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const res = await api.post("/auth/google", {
+                credential: response.credential
+            });
+            localStorage.setItem("token", res.data.access_token);
+            navigate("/dashboard");
+        } catch (err) {
+            console.error(err);
+            setError("Google login failed. Please try again.");
+            triggerShake();
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        const initGoogle = () => {
+            if (window.google) {
+                const client_id = import.meta.env.VITE_GOOGLE_CLIENT_ID || "733475149303-placeholderclientid.apps.googleusercontent.com";
+                window.google.accounts.id.initialize({
+                    client_id: client_id,
+                    callback: handleGoogleCallback,
+                });
+                window.google.accounts.id.renderButton(
+                    document.getElementById("google-signin-btn"),
+                    {
+                        theme: "outline",
+                        size: "large",
+                        width: "360",
+                        text: "signup_with",
+                        shape: "square",
+                    }
+                );
+            } else {
+                setTimeout(initGoogle, 300);
+            }
+        };
+
+        initGoogle();
+    }, []);
+
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -180,6 +225,18 @@ function Register() {
                         )}
                     </motion.button>
                 </form>
+
+                <div className="flex items-center my-6">
+                    <div className="flex-1 border-t-4 border-black"></div>
+                    <span className="px-3 font-black text-sm bg-[#fffaf0]">OR</span>
+                    <div className="flex-1 border-t-4 border-black"></div>
+                </div>
+
+                <div
+                    className="border-4 border-black rounded-lg overflow-hidden bg-white shadow-[4px_4px_0_black] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all flex justify-center py-1"
+                >
+                    <div id="google-signin-btn"></div>
+                </div>
 
                 <p className="mt-6 font-bold text-center">
                     Already have an account?{" "}

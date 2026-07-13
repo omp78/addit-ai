@@ -1,6 +1,6 @@
 from fastapi import APIRouter,Depends
 
-from backend.services.auth_service import register_user,login_user
+from backend.services.auth_service import register_user,login_user, login_google
 
 from backend.dependencies.auth_dependency import get_current_user
 
@@ -8,7 +8,8 @@ from backend.schemas.auth_schema import (
     UserRegister,
     UserResponse,
     UserLogin,
-    TokenResponse
+    TokenResponse,
+    GoogleLogin
 )
 
 router = APIRouter(
@@ -36,6 +37,17 @@ def login(
 ):
 
     return login_user(user)
+
+@router.post(
+    "/google",
+    response_model=TokenResponse
+)
+def google(
+    data: GoogleLogin
+):
+
+    return login_google(data.credential)
+
 
 @router.get("/me")
 def me(
