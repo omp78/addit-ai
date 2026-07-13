@@ -19,116 +19,65 @@ return (
 
 <>
 
-<button
+<motion.button
 
 onClick={
     ()=>setSidebarOpen(!sidebarOpen)
 }
 
-className={`
+animate={{
+    left: sidebarOpen ? "18rem" : "1.25rem"
+}}
+
+transition={{
+    type: "spring",
+    stiffness: 220,
+    damping: 26
+}}
+
+className="
 fixed
 top-5
-
-${sidebarOpen ? "left-72" : "left-5"}
-
 z-50
-
 bg-[#FF6B35]
-
 border-4
 border-black
-
 px-4
 py-2
-
 font-black
-
 shadow-[5px_5px_0_black]
-
-transition-all
-duration-500
-`}
+"
 
 >
 
 💥
 
-</button>
-
-
-<AnimatePresence>
-
-
-{
-sidebarOpen &&
+</motion.button>
 
 
 <motion.aside
-initial={{
-
-scaleX:0,
-scaleY:0.8,
-
-rotate:-25,
-
-opacity:0
-
-}}
-
-
 animate={{
-
-scaleX:1,
-scaleY:1,
-
-rotate:0,
-
-opacity:1
-
+    width: sidebarOpen ? "20rem" : "0rem",
+    borderRightWidth: sidebarOpen ? "4px" : "0px",
+    padding: sidebarOpen ? "1.5rem" : "0rem",
+    boxShadow: sidebarOpen ? "8px 0px 0px 0px #000" : "0px 0px 0px 0px #000"
 }}
-
-
-exit={{
-
-scaleX:0,
-
-rotate:20,
-
-opacity:0
-
-}}
-
-
 transition={{
-
-type:"spring",
-
-stiffness:180,
-
-damping:13
-
+    type: "spring",
+    stiffness: 220,
+    damping: 26
 }}
 className="
-
-origin-left
-
-w-80
 h-screen
 bg-[#FFF7ED]
-
-border-r-4
 border-black
-
-shadow-[8px_0_0_black]
-
-p-6
-
 flex
 flex-col
-
+overflow-hidden
 "
-
 >
+
+<div className="w-[17rem] flex flex-col flex-1" style={{ minWidth: "17rem" }}>
 
 
 {/* LOGO */}
@@ -362,11 +311,8 @@ Logout
 
 
 
+</div>
 </motion.aside>
-
-}
-
-</AnimatePresence>
 
 </>
 

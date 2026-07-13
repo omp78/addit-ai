@@ -150,12 +150,14 @@ function Dashboard() {
     };
 
     const handleNewSummary = () => {
+        console.log("New Summary Button Clicked: Resetting dashboard state! 🚀");
         setSelectedJob(null);
         setResult(null);
         setJob(null);
         setFile(null);
         setProgress(0);
         setProcessing(false);
+        setResultLoading(false);
     };
 
     return (
