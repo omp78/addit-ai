@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
 import AuthLayout from "../components/AuthLayout";
+import logo from "../assets/logo.png";
 
 function Register() {
     const [name, setName] = useState("");
@@ -140,15 +141,15 @@ function Register() {
 
                 "
             >
-                <motion.h1
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="text-3xl font-black mb-1"
-                >
-                    ⚡ Addit AI
-                </motion.h1>
-                <p className="font-bold mb-8 text-black/70">Join the splice bench 🎞️</p>
+                <div className="flex items-center justify-center gap-3 mb-4">
+                    <img
+                        src={logo}
+                        alt="Addit AI"
+                        className="w-12 h-12"
+                    />
+                    <h1 className="text-3xl font-black">Addit AI</h1>
+                </div>
+                <p className="font-bold mb-8 text-center text-black/70">Join the splice bench 🎞️</p>
 
                 <form onSubmit={handleRegister}>
                     <label className="font-black block mb-2">Name</label>

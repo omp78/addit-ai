@@ -132,19 +132,15 @@ function Login() {
 
                 "
             >
-                <motion.h1
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="text-3xl font-black mb-1"
-                >
-                <img
-                    src={logo}
-                    alt="Addit AI"
-                    className="w-14 h-14 mx-auto"
-                /> Addit AI
-                </motion.h1>
-                <p className="font-bold mb-8 text-black/70">Welcome back, splice it up 🎬</p>
+                <div className="flex items-center justify-center gap-3 mb-4">
+                    <img
+                        src={logo}
+                        alt="Addit AI"
+                        className="w-12 h-12"
+                    />
+                    <h1 className="text-3xl font-black">Addit AI</h1>
+                </div>
+                <p className="font-bold mb-8 text-center text-black/70">Welcome back, splice it up 🎬</p>
 
                 <form onSubmit={handleLogin}>
                     <label className="font-black block mb-2">Email</label>

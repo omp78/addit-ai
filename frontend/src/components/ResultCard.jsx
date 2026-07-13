@@ -15,9 +15,9 @@ initial={{
 
     opacity:0,
 
-    y:-60,
+    y:-30,
 
-    rotate:-5
+    rotate:0
 
 }}
 
@@ -38,15 +38,6 @@ transition={{
     type:"spring",
 
     stiffness:130
-
-}}
-
-
-whileHover={{
-
-    rotate:-1,
-
-    scale:1.02
 
 }}
 
@@ -174,10 +165,6 @@ my-8
                                     }}
                                     transition={{
                                         delay:index * 0.15
-                                    }}
-                                    whileHover={{
-                                        scale:1.03,
-                                        rotate:-0.5
                                     }}
                                     className="
                                     bg-[#FFD23F]

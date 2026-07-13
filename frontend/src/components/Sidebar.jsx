@@ -11,7 +11,8 @@ function Sidebar({
     logout,
     sidebarOpen,
     setSidebarOpen,
-    selectedJob
+    selectedJob,
+    onNewSummary
 }){
 
 return (
@@ -150,6 +151,8 @@ flex-col
 
 <button
 
+onClick={onNewSummary}
+
 className="
 
 bg-[#FFD23F]
@@ -271,7 +274,7 @@ scale-105
 
 `
 bg-white
-hover:bg-[#FF6B35]
+hover:bg-[#FFD23F]/30
 `
 
 }

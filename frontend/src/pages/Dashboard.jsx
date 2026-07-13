@@ -149,6 +149,15 @@ function Dashboard() {
         }
     };
 
+    const handleNewSummary = () => {
+        setSelectedJob(null);
+        setResult(null);
+        setJob(null);
+        setFile(null);
+        setProgress(0);
+        setProcessing(false);
+    };
+
     return (
        <div className="h-screen bg-[#F8F4E3] text-black flex overflow-hidden">
             <Sidebar
@@ -159,9 +168,11 @@ function Dashboard() {
                 sidebarOpen={sidebarOpen}
                 setSidebarOpen={setSidebarOpen}
                 selectedJob={selectedJob}
+                onNewSummary={handleNewSummary}
             />
             <main className="flex-1 p-10 overflow-y-auto">
                 <UploadCard
+                    file={file}
                     setFile={setFile}
                     uploadVideo={uploadVideo}
                     job={job}
