@@ -137,7 +137,9 @@ def get_job_result(
 
             "youtube_description": job.youtube_description,
 
-            "seo_keywords": job.seo_keywords
+            "seo_keywords": job.seo_keywords,
+
+            "creator_intelligence": job.creator_intelligence
 
         }
 

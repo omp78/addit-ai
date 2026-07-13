@@ -107,7 +107,9 @@ def process_job(job_id: str):
 
             youtube_description=content.get("youtube_description"),
 
-            seo_keywords=content.get("seo_keywords")
+            seo_keywords=content.get("seo_keywords"),
+
+            creator_intelligence=content.get("creator_intelligence")
         )
 
 

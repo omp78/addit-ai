@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
     motion
 } from "motion/react";
@@ -69,254 +70,255 @@ shadow-[8px_8px_0_black]
 
 }
 function ResultCard({result}){
-
+    const [activeTab, setActiveTab] = useState("summary");
 
     if(!result){
-
         return null;
-
     }
 
+    const tabs = [
+        { id: "summary", label: "📝 Summary & Moments", color: "#FFD23F" },
+        { id: "youtube", label: "🎬 YouTube Optimizer", color: "#3A86FF" },
+        { id: "creator", label: "🔥 Creator Insights", color: "#FF6B35" }
+    ];
+
+    const creatorIntel = result.creator_intelligence;
 
     return(
-
-        <div className="
-            mt-8
-            space-y-5
-        ">
+        <div className="mt-8 space-y-6">
             <motion.h1
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="text-4xl font-black my-8"
+            >
+                ✨ AI Magic Created
+            </motion.h1>
 
-initial={{
-scale:0
-}}
+            {/* Tab navigation */}
+            <div className="flex flex-wrap gap-3 mb-8">
+                {tabs.map((t) => (
+                    <button
+                        key={t.id}
+                        onClick={() => setActiveTab(t.id)}
+                        className={`border-4 border-black px-6 py-2.5 font-black text-sm md:text-base shadow-[4px_4px_0_black] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none hover:translate-y-0.5 transition-all cursor-pointer ${
+                            activeTab === t.id
+                                ? `translate-x-0.5 translate-y-0.5 shadow-none`
+                                : "bg-white"
+                        }`}
+                        style={{
+                            backgroundColor: activeTab === t.id ? t.color : "#fff",
+                            color: activeTab === t.id && t.color === "#3A86FF" ? "#fff" : "#000"
+                        }}
+                    >
+                        {t.label}
+                    </button>
+                ))}
+            </div>
 
-animate={{
-scale:1
-}}
+            {/* Tab content */}
+            {activeTab === "summary" && (
+                <div className="space-y-6">
+                    <PaperCard delay={0}>
+                        <h2 className="text-xl font-bold mb-3">✨ Summary</h2>
+                        <p className="text-black/70 font-semibold leading-relaxed">{result.summary}</p>
+                    </PaperCard>
 
-className="
-
-text-4xl
-
-font-black
-
-my-8
-
-"
-
->
-
-✨ AI Magic Created
-
-</motion.h1>
-
-            <PaperCard delay={0}>
-
-
-                <h2 className="
-                    text-xl
-                    font-bold
-                    mb-3
-                ">
-
-                    ✨ Summary
-
-                </h2>
-
-
-                <p className="
-                    text-black/70
-                ">
-
-                    {result.summary}
-
-                </p>
-
-
-            </PaperCard>
-
-            <PaperCard delay={0.1}>
-                <h2
-                    className="
-                    text-xl
-                    font-bold
-                    mb-4
-                    "
-                >
-                    ⏱️ Important Moments
-                </h2>
-                <div
-                    className="
-                    space-y-3
-                    "
-                >
-                    {
-                        result.chapters?.map(
-                            (chapter,index)=>(
+                    <PaperCard delay={0.1}>
+                        <h2 className="text-xl font-bold mb-4">⏱️ Important Moments</h2>
+                        <div className="space-y-3">
+                            {result.chapters?.map((chapter, index) => (
                                 <motion.div
                                     key={index}
-                                    initial={{
-                                        opacity:0,
-                                        x:-40
-                                    }}
-                                    animate={{
-                                        opacity:1,
-                                        x:0
-                                    }}
-                                    transition={{
-                                        delay:index * 0.15
-                                    }}
-                                    className="
-                                    bg-[#FFD23F]
-                                    border-4
-                                    border-black
-                                    p-4
-                                    flex
-                                    items-center
-                                    gap-5
-                                    shadow-[5px_5px_0_black]
-                                    font-black
-                                    "
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: index * 0.1 }}
+                                    className="bg-[#FFD23F] border-4 border-black p-4 flex items-center gap-5 shadow-[5px_5px_0_black] font-black"
                                 >
-                                    <span
-                                        className="
-                                        bg-black
-                                        text-white
-                                        px-3
-                                        py-1
-                                        "
-                                    >
-                                        {chapter.time}
-                                    </span>
-                                    <p>
-                                        {chapter.title}
-                                    </p>
+                                    <span className="bg-black text-white px-3 py-1 text-sm">{chapter.time}</span>
+                                    <p>{chapter.title}</p>
                                 </motion.div>
-                            )
-                        )
-                    }
+                            ))}
+                        </div>
+                    </PaperCard>
+
+                    <PaperCard delay={0.15}>
+                        <h2 className="text-xl font-bold mb-3">📌 Key Points</h2>
+                        <ul className="list-disc ml-5 space-y-2 font-semibold text-black/70">
+                            {result.key_points?.map((point, index) => (
+                                <motion.li
+                                    key={index}
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: index * 0.05 }}
+                                >
+                                    {point}
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </PaperCard>
                 </div>
-            </PaperCard>
+            )}
 
-            <PaperCard delay={0.15}>
+            {activeTab === "youtube" && (
+                <div className="space-y-6">
+                    <PaperCard delay={0}>
+                        <h2 className="text-xl font-bold mb-5">🎬 YouTube Optimizer Package</h2>
+                        
+                        <div className="space-y-5">
+                            <div>
+                                <h3 className="font-black text-sm uppercase text-[#3A86FF] mb-1">Recommended Title</h3>
+                                <p className="text-black font-bold text-lg bg-[#FFF7ED] border-2 border-black p-3 shadow-[2px_2px_0_black]">{result.youtube_title}</p>
+                            </div>
 
+                            <div>
+                                <h3 className="font-black text-sm uppercase text-[#3A86FF] mb-1">Description Draft</h3>
+                                <pre className="text-black font-semibold whitespace-pre-wrap font-sans bg-[#FFF7ED] border-2 border-black p-4 shadow-[2px_2px_0_black] leading-relaxed">{result.youtube_description}</pre>
+                            </div>
 
-                <h2 className="
-                    text-xl
-                    font-bold
-                    mb-3
-                ">
+                            <div>
+                                <h3 className="font-black text-sm uppercase text-[#3A86FF] mb-1">SEO Tag Keywords</h3>
+                                <p className="text-black/80 font-bold bg-[#FFF7ED] border-2 border-black p-3 shadow-[2px_2px_0_black]">
+                                    {result.seo_keywords?.join(", ")}
+                                </p>
+                            </div>
+                        </div>
+                    </PaperCard>
+                </div>
+            )}
 
-                    📌 Key Points
+            {activeTab === "creator" && (
+                <div className="space-y-6">
+                    {!creatorIntel ? (
+                        <PaperCard>
+                            <div className="text-center py-12">
+                                <span className="text-5xl mb-4 block">🔮</span>
+                                <h3 className="text-2xl font-black mb-2">No Creator Insights Available</h3>
+                                <p className="text-black/60 font-bold max-w-md mx-auto">
+                                    This video was processed using an older version of the pipeline. Try uploading a new video to unlock AI Viral scoring, Hook analysis, and thumbnail prompts!
+                                </p>
+                            </div>
+                        </PaperCard>
+                    ) : (
+                        <div className="space-y-6 animate-fade-in">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <PaperCard delay={0}>
+                                    <h3 className="text-xl font-black mb-3">🔥 Viral Score</h3>
+                                    <div className="flex flex-col items-center justify-center py-6">
+                                        <div className="relative flex items-center justify-center w-36 h-36 border-8 border-black rounded-full bg-[#FF6B35] text-white shadow-[6px_6px_0_black]">
+                                            <span className="text-4xl font-black">{creatorIntel.viral_score}%</span>
+                                        </div>
+                                        <p className="font-bold text-center mt-6 text-black/70">
+                                            {creatorIntel.viral_score >= 80 
+                                                ? "High viral potential! The pacing, topic relevance, and structured hooks are highly engaging."
+                                                : creatorIntel.viral_score >= 60 
+                                                ? "Moderate potential. Solid topic, but can perform better with punchier hooks or edits."
+                                                : "Lower viral potential. Best suited for targeted interest groups."
+                                            }
+                                        </p>
+                                    </div>
+                                </PaperCard>
 
-                </h2>
+                                <PaperCard delay={0.05}>
+                                    <h3 className="text-xl font-black mb-5">📱 Platform Suitability</h3>
+                                    <div className="space-y-4">
+                                        {Object.entries(creatorIntel.platform_scores || {}).map(([platform, score]) => (
+                                            <div key={platform}>
+                                                <div className="flex justify-between font-black text-sm mb-1 capitalize">
+                                                    <span>{platform.replace("_", " ")}</span>
+                                                    <span>{score}%</span>
+                                                </div>
+                                                <div className="border-4 border-black h-6 bg-white overflow-hidden rounded-md">
+                                                    <div
+                                                        style={{ width: `${score}%` }}
+                                                        className={`h-full border-r-2 border-black transition-all ${
+                                                            platform.includes("youtube") ? "bg-[#FF6B35]" : "bg-[#3A86FF]"
+                                                        }`}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </PaperCard>
+                            </div>
 
+                            <PaperCard delay={0.1}>
+                                <div className="flex flex-wrap items-center justify-between gap-3 border-b-4 border-black pb-4 mb-4">
+                                    <h3 className="text-xl font-black">⚡ Hook Analysis</h3>
+                                    <span className={`px-4 py-1 border-4 border-black font-black text-sm shadow-[2px_2px_0_black] ${
+                                        creatorIntel.hook_analysis?.rating === "Strong" ? "bg-green-300" :
+                                        creatorIntel.hook_analysis?.rating === "Medium" ? "bg-yellow-300" : "bg-red-300"
+                                    }`}>
+                                        Rating: {creatorIntel.hook_analysis?.rating || "N/A"}
+                                    </span>
+                                </div>
+                                <p className="font-bold text-black/80 mb-4">{creatorIntel.hook_analysis?.feedback}</p>
+                                <h4 className="font-black text-sm uppercase text-[#FF6B35] mb-2">Suggestions to Optimize:</h4>
+                                <ul className="list-disc ml-5 space-y-2 font-bold text-black/75">
+                                    {creatorIntel.hook_analysis?.suggestions?.map((s, idx) => (
+                                        <li key={idx}>{s}</li>
+                                    ))}
+                                </ul>
+                            </PaperCard>
 
-                <ul className="
-                    list-disc
-                    ml-5
-                    text-black/70
-                ">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <PaperCard delay={0.15}>
+                                    <h3 className="text-xl font-black mb-3">🎯 Target Audience</h3>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <span className="font-black text-[#3A86FF] text-sm uppercase block">Demographics:</span>
+                                            <p className="font-bold text-black/85 mt-1">{creatorIntel.audience_detection?.demographics}</p>
+                                        </div>
+                                        <div>
+                                            <span className="font-black text-[#3A86FF] text-sm uppercase block">Interests:</span>
+                                            <p className="font-bold text-black/85 mt-1">{creatorIntel.audience_detection?.interests}</p>
+                                        </div>
+                                    </div>
+                                </PaperCard>
 
-                    {
-                        result.key_points?.map((point, index) => (
-                            <motion.li
-                                key={index}
-                                initial={{
-                                    opacity: 0,
-                                    x: -20
-                                }}
-                                animate={{
-                                    opacity: 1,
-                                    x: 0
-                                }}
-                                transition={{
-                                    delay: index * 0.1
-                                }}
-                            >
-                                {point}
-                            </motion.li>
-                        ))
-                    }
+                                <PaperCard delay={0.2}>
+                                    <h3 className="text-xl font-black mb-3">📅 Best Time to Upload</h3>
+                                    <ul className="space-y-3 mt-2">
+                                        {creatorIntel.upload_time_suggestions?.map((t, idx) => (
+                                            <li key={idx} className="flex items-center gap-3 bg-[#FFF7ED] border-2 border-black p-3 font-bold shadow-[2px_2px_0_black]">
+                                                <span>⏰</span>
+                                                <span className="text-black/85">{t}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </PaperCard>
+                            </div>
 
-                </ul>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <PaperCard delay={0.25}>
+                                    <h3 className="text-xl font-black mb-4">📢 Optimal CTAs</h3>
+                                    <ul className="space-y-3">
+                                        {creatorIntel.cta_suggestions?.map((cta, idx) => (
+                                            <li key={idx} className="flex items-start gap-3 bg-blue-50 border-2 border-black p-3.5 font-bold shadow-[3px_3px_0_black]">
+                                                <span className="text-lg">💬</span>
+                                                <span className="text-black/85 leading-relaxed">{cta}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </PaperCard>
 
-
-            </PaperCard>
-
-
-
-
-            <PaperCard delay={0.3}>
-
-
-                <h2 className="
-                    text-xl
-                    font-bold
-                    mb-3
-                ">
-
-                    🎬 YouTube Package
-
-                </h2>
-
-
-                <h3 className="font-semibold">
-                    Title
-                </h3>
-
-
-                <p className="text-black/70">
-
-                    {result.youtube_title}
-
-                </p>
-
-
-                <h3 className="
-                    font-semibold
-                    mt-4
-                ">
-
-                    Description
-
-                </h3>
-
-
-                <p className="text-black/70">
-
-                    {result.youtube_description}
-
-                </p>
-
-
-
-                <h3 className="
-                    font-semibold
-                    mt-4
-                ">
-
-                    SEO Keywords
-
-                </h3>
-
-
-                <p className="text-black/70">
-
-                    {
-                        result.seo_keywords?.join(", ")
-                    }
-
-                </p>
-
-
-            </PaperCard>
-
-
+                                <PaperCard delay={0.3}>
+                                    <h3 className="text-xl font-black mb-4">🖼️ Visual Thumbnail Ideas</h3>
+                                    <ul className="space-y-3">
+                                        {creatorIntel.thumbnail_ideas?.map((idea, idx) => (
+                                            <li key={idx} className="flex items-start gap-3 bg-yellow-50 border-2 border-black p-3.5 font-bold shadow-[3px_3px_0_black]">
+                                                <span className="text-lg">💡</span>
+                                                <span className="text-black/85 leading-relaxed">{idea}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </PaperCard>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
-
     );
-
 }
 
 

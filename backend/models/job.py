@@ -116,3 +116,8 @@ class Job(Base):
         JSON,
         nullable=True
     )
+
+    creator_intelligence: Mapped[dict] = mapped_column(
+        JSON,
+        nullable=True
+    )

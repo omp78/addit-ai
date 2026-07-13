@@ -64,7 +64,42 @@ def generate_content(transcript_path: Path, job_id: str, timestamp_path: Path) -
                 "",
                 "",
                 ""
-            ]
+            ],
+
+            "creator_intelligence": {{
+                "viral_score": 85,
+                "hook_analysis": {{
+                    "rating": "Strong",
+                    "feedback": "",
+                    "suggestions": [
+                        "",
+                        ""
+                    ]
+                }},
+                "audience_detection": {{
+                    "demographics": "",
+                    "interests": ""
+                }},
+                "platform_scores": {{
+                    "youtube_longform": 90,
+                    "youtube_shorts": 70,
+                    "tiktok": 80,
+                    "instagram_reels": 75,
+                    "linkedin": 60
+                }},
+                "upload_time_suggestions": [
+                    "",
+                    ""
+                ],
+                "cta_suggestions": [
+                    "",
+                    ""
+                ],
+                "thumbnail_ideas": [
+                    "",
+                    ""
+                ]
+            }}
         }}
 
         Rules for chapters:
