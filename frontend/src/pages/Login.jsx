@@ -92,7 +92,11 @@ function Login() {
                     transition={{ delay: 0.1 }}
                     className="text-3xl font-black mb-1"
                 >
-                    ⚡ Addit AI
+                <img
+                    src={logo}
+                    alt="Addit AI"
+                    className="w-14 h-14 mx-auto"
+                /> Addit AI
                 </motion.h1>
                 <p className="font-bold mb-8 text-black/70">Welcome back, splice it up 🎬</p>
 

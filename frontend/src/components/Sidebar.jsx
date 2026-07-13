@@ -2,6 +2,7 @@ import {
     motion,
     AnimatePresence
 } from "motion/react";
+import logo from "../assets/logo.png";
 
 function Sidebar({
     user,
@@ -131,19 +132,17 @@ flex-col
 
 {/* LOGO */}
 
-<h1
-className="
+<div className="flex items-center gap-3">
+    <img
+        src={logo}
+        alt="Addit AI"
+        className="w-12 h-12"
+    />
 
-text-3xl
-font-black
-mb-10
-
-"
->
-
-⚡ Addit AI
-
-</h1>
+    <h1 className="text-3xl font-black">
+        Addit AI
+    </h1>
+</div>
 
 
 
