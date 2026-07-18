@@ -99,6 +99,29 @@ def generate_content(transcript_path: Path, job_id: str, timestamp_path: Path) -
                     "",
                     ""
                 ]
+            }},
+
+            "social_package": {{
+                "instagram": {{
+                    "caption": "",
+                    "hashtags": ["", "", ""]
+                }},
+                "linkedin": {{
+                    "post": ""
+                }},
+                "twitter": {{
+                    "thread": [
+                        "",
+                        "",
+                        ""
+                    ]
+                }},
+                "facebook": {{
+                    "caption": ""
+                }},
+                "threads": {{
+                    "post": ""
+                }}
             }}
         }}
 
@@ -108,6 +131,14 @@ def generate_content(transcript_path: Path, job_id: str, timestamp_path: Path) -
         - Create meaningful video chapters.
         - Use the timestamp data.
         - Do not create a chapter for every segment.
+        - Convert seconds into MM:SS format.
+
+        Rules for social posts:
+        - For Instagram: Write an engaging, emoji-rich caption with spacing and a dedicated list of relevant hashtags.
+        - For LinkedIn: Write a professional, hook-driven post highlighting key business/educational value with clean bullet points.
+        - For Twitter: Write a thread of at least 3 tweets. Each tweet must be strictly under 280 characters.
+        - For Facebook: Write a casual, community-engaging post.
+        - For Threads: Write a conversational, punchy, text-first post.
         - Convert seconds into MM:SS format.
 
         Transcript:

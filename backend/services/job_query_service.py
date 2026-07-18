@@ -139,7 +139,9 @@ def get_job_result(
 
             "seo_keywords": job.seo_keywords,
 
-            "creator_intelligence": job.creator_intelligence
+            "creator_intelligence": job.creator_intelligence,
+
+            "social_package": job.social_package
 
         }
 

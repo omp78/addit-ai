@@ -109,7 +109,9 @@ def process_job(job_id: str):
 
             seo_keywords=content.get("seo_keywords"),
 
-            creator_intelligence=content.get("creator_intelligence")
+            creator_intelligence=content.get("creator_intelligence"),
+
+            social_package=content.get("social_package")
         )
 
 

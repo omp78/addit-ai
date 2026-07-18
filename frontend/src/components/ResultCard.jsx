@@ -71,6 +71,7 @@ shadow-[8px_8px_0_black]
 }
 function ResultCard({result}){
     const [activeTab, setActiveTab] = useState("summary");
+    const [copiedState, setCopiedState] = useState({});
 
     if(!result){
         return null;
@@ -79,10 +80,20 @@ function ResultCard({result}){
     const tabs = [
         { id: "summary", label: "📝 Summary & Moments", color: "#FFD23F" },
         { id: "youtube", label: "🎬 YouTube Optimizer", color: "#3A86FF" },
-        { id: "creator", label: "🔥 Creator Insights", color: "#FF6B35" }
+        { id: "creator", label: "🔥 Creator Insights", color: "#FF6B35" },
+        { id: "social", label: "📱 Social Posts", color: "#EC4899" }
     ];
 
+    const copyToClipboard = (key, text) => {
+        navigator.clipboard.writeText(text);
+        setCopiedState(prev => ({ ...prev, [key]: true }));
+        setTimeout(() => {
+            setCopiedState(prev => ({ ...prev, [key]: false }));
+        }, 2000);
+    };
+
     const creatorIntel = result.creator_intelligence;
+    const socialPkg = result.social_package;
 
     return(
         <div className="mt-8 space-y-6">
@@ -107,7 +118,7 @@ function ResultCard({result}){
                         }`}
                         style={{
                             backgroundColor: activeTab === t.id ? t.color : "#fff",
-                            color: activeTab === t.id && t.color === "#3A86FF" ? "#fff" : "#000"
+                            color: activeTab === t.id && (t.color === "#3A86FF" || t.color === "#EC4899") ? "#fff" : "#000"
                         }}
                     >
                         {t.label}
@@ -311,6 +322,132 @@ function ResultCard({result}){
                                             </li>
                                         ))}
                                     </ul>
+                                </PaperCard>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {activeTab === "social" && (
+                <div className="space-y-6 animate-fade-in">
+                    {!socialPkg ? (
+                        <PaperCard>
+                            <div className="text-center py-12">
+                                <span className="text-5xl mb-4 block">🔮</span>
+                                <h3 className="text-2xl font-black mb-2">No Social Package Available</h3>
+                                <p className="text-black/60 font-bold max-w-md mx-auto">
+                                    This video was processed using an older version of the pipeline. Try uploading a new video to automatically generate captions and Twitter threads!
+                                </p>
+                            </div>
+                        </PaperCard>
+                    ) : (
+                        <div className="space-y-6">
+                            {/* Instagram Card */}
+                            <PaperCard>
+                                <div className="flex flex-wrap justify-between items-center gap-3 border-b-4 border-black pb-4 mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-2xl">📸</span>
+                                        <h3 className="text-xl font-black">Instagram Caption</h3>
+                                    </div>
+                                    <button
+                                        onClick={() => copyToClipboard("instagram", `${socialPkg.instagram?.caption}\n\n${socialPkg.instagram?.hashtags?.join(" ")}`)}
+                                        className="bg-[#EC4899] text-white border-2 border-black px-4 py-1.5 font-black text-sm shadow-[2px_2px_0_black] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none hover:translate-y-0.5 transition-all cursor-pointer"
+                                    >
+                                        {copiedState["instagram"] ? "Copied! ✓" : "Copy Caption 📋"}
+                                    </button>
+                                </div>
+                                <p className="font-semibold text-black/80 whitespace-pre-wrap leading-relaxed">{socialPkg.instagram?.caption}</p>
+                                <div className="mt-4 pt-3 border-t-2 border-dashed border-black/20 text-[#EC4899] font-black text-sm">
+                                    {socialPkg.instagram?.hashtags?.join(" ")}
+                                </div>
+                            </PaperCard>
+
+                            {/* LinkedIn Card */}
+                            <PaperCard>
+                                <div className="flex flex-wrap justify-between items-center gap-3 border-b-4 border-black pb-4 mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-2xl">💼</span>
+                                        <h3 className="text-xl font-black">LinkedIn Post</h3>
+                                    </div>
+                                    <button
+                                        onClick={() => copyToClipboard("linkedin", socialPkg.linkedin?.post)}
+                                        className="bg-[#0077B5] text-white border-2 border-black px-4 py-1.5 font-black text-sm shadow-[2px_2px_0_black] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none hover:translate-y-0.5 transition-all cursor-pointer"
+                                    >
+                                        {copiedState["linkedin"] ? "Copied! ✓" : "Copy Post 📋"}
+                                    </button>
+                                </div>
+                                <pre className="font-semibold text-black/80 whitespace-pre-wrap leading-relaxed font-sans">{socialPkg.linkedin?.post}</pre>
+                            </PaperCard>
+
+                            {/* Twitter Thread Card */}
+                            <PaperCard>
+                                <div className="flex flex-wrap justify-between items-center gap-3 border-b-4 border-black pb-4 mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-2xl">🐦</span>
+                                        <h3 className="text-xl font-black">Twitter / X Thread</h3>
+                                    </div>
+                                    <button
+                                        onClick={() => copyToClipboard("twitter", socialPkg.twitter?.thread?.join("\n\n---\n\n"))}
+                                        className="bg-black text-white border-2 border-black px-4 py-1.5 font-black text-sm shadow-[2px_2px_0_black] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none hover:translate-y-0.5 transition-all cursor-pointer"
+                                    >
+                                        {copiedState["twitter"] ? "Copied! ✓" : "Copy Entire Thread 📋"}
+                                    </button>
+                                </div>
+                                <div className="space-y-4">
+                                    {socialPkg.twitter?.thread?.map((tweet, idx) => (
+                                        <div key={idx} className="bg-[#FFF7ED] border-2 border-black p-4 shadow-[3px_3px_0_black] relative">
+                                            <span className="absolute top-2 right-3 text-xs bg-black text-white px-2 py-0.5 font-bold rounded">
+                                                {idx + 1} / {socialPkg.twitter?.thread?.length}
+                                            </span>
+                                            <p className="font-semibold text-black/85 leading-relaxed pr-10">{tweet}</p>
+                                            <div className="flex justify-between items-center mt-3 pt-2 border-t border-black/10">
+                                                <span className="text-xs font-bold text-black/40">{tweet.length} / 280 chars</span>
+                                                <button
+                                                    onClick={() => copyToClipboard(`tweet-${idx}`, tweet)}
+                                                    className="bg-white border-2 border-black px-2.5 py-0.5 font-black text-xs shadow-[1.5px_1.5px_0_black] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                                                >
+                                                    {copiedState[`tweet-${idx}`] ? "Copied! ✓" : "Copy Tweet 📋"}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </PaperCard>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Facebook Card */}
+                                <PaperCard>
+                                    <div className="flex flex-wrap justify-between items-center gap-3 border-b-4 border-black pb-4 mb-4">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-2xl">👥</span>
+                                            <h3 className="text-xl font-black">Facebook Post</h3>
+                                        </div>
+                                        <button
+                                            onClick={() => copyToClipboard("facebook", socialPkg.facebook?.caption)}
+                                            className="bg-[#1877F2] text-white border-2 border-black px-3 py-1 font-black text-xs shadow-[2px_2px_0_black] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none hover:translate-y-0.5 transition-all cursor-pointer"
+                                        >
+                                            {copiedState["facebook"] ? "Copied! ✓" : "Copy 📋"}
+                                        </button>
+                                    </div>
+                                    <p className="font-semibold text-black/80 whitespace-pre-wrap leading-relaxed">{socialPkg.facebook?.caption}</p>
+                                </PaperCard>
+
+                                {/* Threads Card */}
+                                <PaperCard>
+                                    <div className="flex flex-wrap justify-between items-center gap-3 border-b-4 border-black pb-4 mb-4">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-2xl">🧵</span>
+                                            <h3 className="text-xl font-black">Threads Post</h3>
+                                        </div>
+                                        <button
+                                            onClick={() => copyToClipboard("threads", socialPkg.threads?.post)}
+                                            className="bg-black text-white border-2 border-black px-3 py-1 font-black text-xs shadow-[2px_2px_0_black] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none hover:translate-y-0.5 transition-all cursor-pointer"
+                                        >
+                                            {copiedState["threads"] ? "Copied! ✓" : "Copy 📋"}
+                                        </button>
+                                    </div>
+                                    <p className="font-semibold text-black/80 whitespace-pre-wrap leading-relaxed">{socialPkg.threads?.post}</p>
                                 </PaperCard>
                             </div>
                         </div>

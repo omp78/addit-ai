@@ -121,3 +121,8 @@ class Job(Base):
         JSON,
         nullable=True
     )
+
+    social_package: Mapped[dict] = mapped_column(
+        JSON,
+        nullable=True
+    )
