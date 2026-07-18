@@ -44,52 +44,29 @@ def process_job(job_id: str):
         )
 
 
-        # audio
-        audio = extract_audio(
-            job.video_path,
-            job_id
-        )
-        logger.info(f"Audio extracted for job: {job_id}")
-
-
+        # 1. Update status to AUDIO_EXTRACTED representing "Uploading video to Google..." (50% progress)
         update_job(
             db,
             job,
-            status=JobStatus.AUDIO_EXTRACTED.value,
-            audio_path=audio["audio_path"]
+            status=JobStatus.AUDIO_EXTRACTED.value
         )
+        logger.info(f"Video upload to Gemini started: {job_id}")
 
-
-        # transcription
-        transcript = transcribe_audio(
-            Path(audio["audio_path"]),
-            job_id
-        )
-        logger.info(f"Transcription completed for job: {job_id}")
-
-
-        update_job(
-            db,
-            job,
-            status=JobStatus.TRANSCRIBED.value,
-            transcript_path=transcript["transcript_path"],
-            language=transcript["language"]
-        )
-
-
-        # content
-       # content
+        # 2. Generate content (Uploads raw video to Gemini and waits for processing)
         content = generate_content(
-            Path(transcript["transcript_path"]),
-            job_id,
-            Path(transcript["timestamp_path"])
+            Path(job.video_path),
+            job_id
         )
 
-        logger.info(
-            f"Content generated for job: {job_id}"
+        # 3. Update status to TRANSCRIBED representing "Gemini analyzing video..." (75% progress)
+        update_job(
+            db,
+            job,
+            status=JobStatus.TRANSCRIBED.value
         )
+        logger.info(f"Gemini video analysis completed: {job_id}")
 
-
+        # 4. Save results on success
         update_job(
             db,
             job,
@@ -114,15 +91,12 @@ def process_job(job_id: str):
             social_package=content.get("social_package")
         )
 
-
         logger.info(
             f"Job completed successfully: {job_id}"
         )
 
         return {
-            **{"video_path": job.video_path},
-            **audio,
-            **transcript,
+            "video_path": job.video_path,
             **content
         }
 

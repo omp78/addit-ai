@@ -20,21 +20,33 @@ if not api_key:
 
 client = genai.Client(api_key=api_key)
 
-def generate_content(transcript_path: Path, job_id: str, timestamp_path: Path) -> dict:
+def generate_content(video_path: Path, job_id: str) -> dict:
     """
-    Generate AI content from a transcript.
+    Generate AI content directly from a video file.
     """
-    SUMMARY_DIR.mkdir(parents=True, exist_ok=True)
-    #summary_path = SUMMARY_DIR / f"{job_id}.json"
+    import time
+    from backend.utils.logger import logger
 
-    with open(transcript_path, "r", encoding="utf-8") as file:
-        transcript = file.read()
-    with open(timestamp_path, "r", encoding="utf-8") as file:
-        timestamps = json.load(file)
+    SUMMARY_DIR.mkdir(parents=True, exist_ok=True)
+
+    logger.info(f"Uploading video {video_path.name} to Gemini Files API...")
+    video_file = client.files.upload(file=video_path)
+    logger.info(f"Uploaded. File name on Google servers: {video_file.name}. State: {video_file.state.name}")
+
+    while video_file.state.name == "PROCESSING":
+        logger.info("Waiting for Google to process video frames...")
+        time.sleep(5)
+        video_file = client.files.get(name=video_file.name)
+
+    if video_file.state.name == "FAILED":
+        raise ValueError(f"Video file processing failed on Google servers: {video_file.name}")
+
+    logger.info("Video processing complete. Prompting Gemini model...")
+
     prompt = f"""
         You are an expert video content analyzer.
 
-        Analyze the transcript and timestamp segments.
+        Watch the video (both visual frames and audio cues).
 
         Return ONLY valid JSON.
 
@@ -129,7 +141,6 @@ def generate_content(transcript_path: Path, job_id: str, timestamp_path: Path) -
 
         - Find only important moments.
         - Create meaningful video chapters.
-        - Use the timestamp data.
         - Do not create a chapter for every segment.
         - Convert seconds into MM:SS format.
 
@@ -139,20 +150,14 @@ def generate_content(transcript_path: Path, job_id: str, timestamp_path: Path) -
         - For Twitter: Write a thread of at least 3 tweets. Each tweet must be strictly under 280 characters.
         - For Facebook: Write a casual, community-engaging post.
         - For Threads: Write a conversational, punchy, text-first post.
-        - Convert seconds into MM:SS format.
-
-        Transcript:
-
-        {transcript}
-
-
-        Timestamp Data:
-
-        {timestamps}
     """
+
     response = client.models.generate_content(
-    model="gemini-2.5-flash",
-    contents=prompt
+        model="gemini-2.5-flash",
+        contents=[
+            video_file,
+            prompt
+        ]
     )
     generated_text = response.text
     generated_text = generated_text.replace("```json", "")
@@ -167,6 +172,6 @@ def generate_content(transcript_path: Path, job_id: str, timestamp_path: Path) -
         json.dump(content, file, indent=4, ensure_ascii=False)
 
     return {
-    "summary_path": str(summary_path),
-    **content
+        "summary_path": str(summary_path),
+        **content
     }
