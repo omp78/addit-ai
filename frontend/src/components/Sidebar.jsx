@@ -77,7 +77,7 @@ overflow-hidden
 "
 >
 
-<div className="w-[17rem] flex flex-col flex-1" style={{ minWidth: "17rem" }}>
+<div className="w-[17rem] flex flex-col flex-1 min-h-0" style={{ minWidth: "17rem" }}>
 
 
 {/* LOGO */}
