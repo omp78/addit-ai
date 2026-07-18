@@ -126,3 +126,8 @@ class Job(Base):
         JSON,
         nullable=True
     )
+
+    shorts_package: Mapped[dict] = mapped_column(
+        JSON,
+        nullable=True
+    )

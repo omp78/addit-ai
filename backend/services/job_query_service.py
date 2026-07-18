@@ -141,7 +141,11 @@ def get_job_result(
 
             "creator_intelligence": job.creator_intelligence,
 
-            "social_package": job.social_package
+            "social_package": job.social_package,
+
+            "shorts_package": job.shorts_package,
+
+            "job_id": job.job_id
 
         }
 

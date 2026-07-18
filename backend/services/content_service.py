@@ -134,7 +134,16 @@ def generate_content(video_path: Path, job_id: str) -> dict:
                 "threads": {{
                     "post": ""
                 }}
-            }}
+            }},
+
+            "shorts_package": [
+                {{
+                    "title": "",
+                    "start_time": "",
+                    "end_time": "",
+                    "description": ""
+                }}
+            ]
         }}
 
         Rules for chapters:
@@ -150,6 +159,13 @@ def generate_content(video_path: Path, job_id: str) -> dict:
         - For Twitter: Write a thread of at least 3 tweets. Each tweet must be strictly under 280 characters.
         - For Facebook: Write a casual, community-engaging post.
         - For Threads: Write a conversational, punchy, text-first post.
+
+        Rules for shorts package:
+        - Identify 3 distinct, highly engaging, or high-energy clip segments.
+        - Each segment must be between 15 seconds and 60 seconds long.
+        - Ensure segments do not overlap significantly.
+        - The start_time and end_time MUST be in MM:SS format matching the video's actual timings.
+        - Generate a catchy, viral title and description for each clip.
     """
 
     response = client.models.generate_content(

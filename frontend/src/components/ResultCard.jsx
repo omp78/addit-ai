@@ -1,7 +1,8 @@
+
 import { useState } from "react";
-import {
-    motion
-} from "motion/react";
+import api from "../api/axios";
+import { motion } from "motion/react";
+
 function PaperCard({
     children,
     delay=0
@@ -72,6 +73,8 @@ shadow-[8px_8px_0_black]
 function ResultCard({result}){
     const [activeTab, setActiveTab] = useState("summary");
     const [copiedState, setCopiedState] = useState({});
+    const [clipLayouts, setClipLayouts] = useState({});
+    const [exportingClips, setExportingClips] = useState({});
 
     if(!result){
         return null;
@@ -81,7 +84,8 @@ function ResultCard({result}){
         { id: "summary", label: "📝 Summary & Moments", color: "#FFD23F" },
         { id: "youtube", label: "🎬 YouTube Optimizer", color: "#3A86FF" },
         { id: "creator", label: "🔥 Creator Insights", color: "#FF6B35" },
-        { id: "social", label: "📱 Social Posts", color: "#EC4899" }
+        { id: "social", label: "📱 Social Posts", color: "#EC4899" },
+        { id: "clips", label: "✂️ AI Clips", color: "#F77F00" }
     ];
 
     const copyToClipboard = (key, text) => {
@@ -92,8 +96,42 @@ function ResultCard({result}){
         }, 2000);
     };
 
+    const handleExportClip = async (clip, idx) => {
+        const layout = clipLayouts[idx] || "vertical";
+        setExportingClips(prev => ({ ...prev, [idx]: true }));
+        try {
+            const response = await api.post(
+                `/jobs/${result.job_id}/trim`,
+                {
+                    start_time: clip.start_time,
+                    end_time: clip.end_time,
+                    aspect_ratio: layout
+                },
+                {
+                    responseType: "blob"
+                }
+            );
+
+            const blob = new Blob([response.data], { type: "video/mp4" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${clip.title.replace(/[^a-zA-Z0-9]/g, "_")}_${layout}.mp4`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error("Export clip failed:", error);
+            alert("Export clip failed. Make sure the original video is still available on the server.");
+        } finally {
+            setExportingClips(prev => ({ ...prev, [idx]: false }));
+        }
+    };
+
     const creatorIntel = result.creator_intelligence;
     const socialPkg = result.social_package;
+    const shortsPkg = result.shorts_package;
 
     return(
         <div className="mt-8 space-y-6">
@@ -118,7 +156,7 @@ function ResultCard({result}){
                         }`}
                         style={{
                             backgroundColor: activeTab === t.id ? t.color : "#fff",
-                            color: activeTab === t.id && (t.color === "#3A86FF" || t.color === "#EC4899") ? "#fff" : "#000"
+                            color: activeTab === t.id && (t.color === "#3A86FF" || t.color === "#EC4899" || t.color === "#F77F00") ? "#fff" : "#000"
                         }}
                     >
                         {t.label}
@@ -450,6 +488,78 @@ function ResultCard({result}){
                                     <p className="font-semibold text-black/80 whitespace-pre-wrap leading-relaxed">{socialPkg.threads?.post}</p>
                                 </PaperCard>
                             </div>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {activeTab === "clips" && (
+                <div className="space-y-6 animate-fade-in">
+                    {!shortsPkg ? (
+                        <PaperCard>
+                            <div className="text-center py-12">
+                                <span className="text-5xl mb-4 block">🔮</span>
+                                <h3 className="text-2xl font-black mb-2">No AI Clips Available</h3>
+                                <p className="text-black/60 font-bold max-w-md mx-auto">
+                                    This video was processed using an older version of the pipeline. Try uploading a new video to automatically generate ready-to-export vertical shorts!
+                                </p>
+                            </div>
+                        </PaperCard>
+                    ) : (
+                        <div className="grid grid-cols-1 gap-6">
+                            {shortsPkg.map((clip, idx) => {
+                                const isExporting = exportingClips[idx] || false;
+                                const currentLayout = clipLayouts[idx] || "vertical";
+                                return (
+                                    <PaperCard key={idx} delay={idx * 0.1}>
+                                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b-4 border-black pb-4 mb-4">
+                                            <div>
+                                                <h3 className="text-2xl font-black mb-1">🎬 {clip.title}</h3>
+                                                <span className="inline-block bg-[#F77F00] text-white text-xs font-black px-3 py-1 border-2 border-black shadow-[1.5px_1.5px_0_black]">
+                                                    ⏱️ {clip.start_time} - {clip.end_time}
+                                                </span>
+                                            </div>
+
+                                            {/* Selector & Export Control */}
+                                            <div className="flex flex-wrap items-center gap-3">
+                                                <div className="flex border-2 border-black shadow-[2px_2px_0_black] bg-white rounded overflow-hidden">
+                                                    <button
+                                                        onClick={() => setClipLayouts(prev => ({ ...prev, [idx]: "vertical" }))}
+                                                        className={`px-3 py-1.5 font-bold text-xs cursor-pointer transition-all ${
+                                                            currentLayout === "vertical" 
+                                                                ? "bg-black text-white" 
+                                                                : "bg-white text-black hover:bg-black/5"
+                                                        }`}
+                                                    >
+                                                        📱 Vertical (9:16)
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setClipLayouts(prev => ({ ...prev, [idx]: "original" }))}
+                                                        className={`px-3 py-1.5 font-bold text-xs cursor-pointer border-l-2 border-black transition-all ${
+                                                            currentLayout === "original" 
+                                                                ? "bg-black text-white" 
+                                                                : "bg-white text-black hover:bg-black/5"
+                                                        }`}
+                                                    >
+                                                        🎬 Original Layout
+                                                    </button>
+                                                </div>
+
+                                                <button
+                                                    disabled={isExporting}
+                                                    onClick={() => handleExportClip(clip, idx)}
+                                                    className="bg-[#F77F00] text-white border-2 border-black px-4 py-2 font-black text-sm shadow-[3px_3px_0_black] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none hover:translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                                >
+                                                    {isExporting ? "Processing Clip... ⚙️" : "Export & Download 🚀"}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <p className="font-semibold text-black/70 leading-relaxed">
+                                            {clip.description}
+                                        </p>
+                                    </PaperCard>
+                                );
+                            })}
                         </div>
                     )}
                 </div>

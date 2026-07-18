@@ -88,7 +88,9 @@ def process_job(job_id: str):
 
             creator_intelligence=content.get("creator_intelligence"),
 
-            social_package=content.get("social_package")
+            social_package=content.get("social_package"),
+
+            shorts_package=content.get("shorts_package")
         )
 
         logger.info(
